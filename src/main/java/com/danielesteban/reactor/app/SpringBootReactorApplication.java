@@ -23,7 +23,8 @@ public class SpringBootReactorApplication implements CommandLineRunner {
                     if (e.isEmpty())
                         throw new RuntimeException("Nombres no puede estar vacio");
                     System.out.println(e);
-                });
+                })
+                .map(String::toUpperCase);
 
 //        nombres.subscribe(log::info);
         nombres.subscribe(log::info,
