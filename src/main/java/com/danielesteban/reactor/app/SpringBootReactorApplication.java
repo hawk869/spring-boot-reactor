@@ -18,9 +18,10 @@ public class SpringBootReactorApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        Flux<Usuario> nombres = Flux.just("Daniel Cepeda", "Maria Fulana", "Pedro Fulano", "Andres Guzman", "Juan Fulano", "Bruce Lee", "Bruce Willis")
+        Flux<String > nombres = Flux.just("Daniel Cepeda", "Maria Fulana", "Pedro Fulano", "Andres Guzman", "Juan Fulano", "Bruce Lee", "Bruce Willis");
+
 //                .doOnNext(System.out::println);
-                .map(nombre -> new Usuario(nombre.split(" ")[0].toUpperCase(), nombre.split(" ")[1].toUpperCase()))
+        Flux<Usuario> usuarios = nombres.map(nombre -> new Usuario(nombre.split(" ")[0].toUpperCase(), nombre.split(" ")[1].toUpperCase()))
                 .filter(usuario -> usuario.getNombre().equalsIgnoreCase("bruce"))
                 .doOnNext(usuario -> {
                     if (usuario == null)
@@ -34,7 +35,7 @@ public class SpringBootReactorApplication implements CommandLineRunner {
                 });
 
 //        nombres.subscribe(log::info);
-        nombres.subscribe(usuario -> log.info(usuario.getNombre()),
+        usuarios.subscribe(usuario -> log.info(usuario.toString()),
                 error -> log.error(error.getMessage()),
                 () -> log.info("Ha finalizado la ejecucion del observable con exito!!"));
     }
