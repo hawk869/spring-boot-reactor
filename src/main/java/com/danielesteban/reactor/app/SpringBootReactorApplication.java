@@ -1,6 +1,8 @@
 package com.danielesteban.reactor.app;
 
+import com.danielesteban.reactor.app.models.Comentarios;
 import com.danielesteban.reactor.app.models.Usuario;
+import com.danielesteban.reactor.app.models.UsuarioComentarios;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -27,6 +29,20 @@ public class SpringBootReactorApplication implements CommandLineRunner {
         ejemploFlatMap();
         ejemploToString();
         ejemploCollectList();
+        ejemploUsuarioComentariosFlatMap();
+    }
+
+    public void ejemploUsuarioComentariosFlatMap() {
+        Mono<Usuario> usuarioMono = Mono.fromCallable(() -> new Usuario("John", "Doe"));
+        Mono<Comentarios> comentariosUsuarioMono = Mono.fromCallable(() -> {
+           Comentarios comentarios = new Comentarios();
+           comentarios.addComentarios("Hola pepe, como vas?");
+           comentarios.addComentarios("Mañana voy a la playa");
+           comentarios.addComentarios("Estoy aburrido con mi trabajo");
+           return comentarios;
+        });
+        usuarioMono.flatMap(u -> comentariosUsuarioMono.map(c -> new UsuarioComentarios(u, c)))
+                .subscribe(uc -> log.info(uc.toString()));
     }
     public void ejemploCollectList() {
 
