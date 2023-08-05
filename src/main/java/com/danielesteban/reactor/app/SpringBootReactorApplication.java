@@ -26,6 +26,22 @@ public class SpringBootReactorApplication implements CommandLineRunner {
         ejemploIterable();
         ejemploFlatMap();
         ejemploToString();
+        ejemploCollectList();
+    }
+    public void ejemploCollectList() {
+
+        List<String> users = new ArrayList<>();
+        users.add("Daniel Cepeda");
+        users.add("Maria Fulana");
+        users.add("Pedro Fulano");
+        users.add("Andres Guzman");
+        users.add("Juan Fulano");
+        users.add("Bruce Lee");
+        users.add("Bruce Willis");
+
+        Flux.fromIterable(users)
+                .collectList()
+                .subscribe(lista -> lista.forEach(log::info));
     }
 
     public void ejemploToString() {
