@@ -30,8 +30,43 @@ public class SpringBootReactorApplication implements CommandLineRunner {
         ejemploToString();
         ejemploCollectList();
         ejemploUsuarioComentariosFlatMap();
-    }
+        ejemploUsuarioComentariosZipWith();
+        ejemploUsuarioComentariosZipWithForma2();
 
+    }
+    public void ejemploUsuarioComentariosZipWithForma2() {
+        Mono<Usuario> usuarioMono = Mono.fromCallable(() -> new Usuario("John", "Doe"));
+        Mono<Comentarios> comentariosUsuarioMono = Mono.fromCallable(() -> {
+            Comentarios comentarios = new Comentarios();
+            comentarios.addComentarios("Hola pepe, como vas?");
+            comentarios.addComentarios("Mañana voy a la playa");
+            comentarios.addComentarios("Estoy aburrido con mi trabajo");
+            return comentarios;
+        });
+        Mono<UsuarioComentarios> usuarioConComentarios = usuarioMono
+                .zipWith(comentariosUsuarioMono)
+                        .map(tuple -> {
+                            Usuario u = tuple.getT1();
+                            Comentarios c = tuple.getT2();
+                            return new UsuarioComentarios(u,c);
+                        });
+        usuarioConComentarios.subscribe(uc -> log.info(uc.toString()));
+    }
+    public void ejemploUsuarioComentariosZipWith() {
+        Mono<Usuario> usuarioMono = Mono.fromCallable(() -> new Usuario("John", "Doe"));
+        Mono<Comentarios> comentariosUsuarioMono = Mono.fromCallable(() -> {
+            Comentarios comentarios = new Comentarios();
+            comentarios.addComentarios("Hola pepe, como vas?");
+            comentarios.addComentarios("Mañana voy a la playa");
+            comentarios.addComentarios("Estoy aburrido con mi trabajo");
+            return comentarios;
+        });
+//        usuarioMono.zipWith(comentariosUsuarioMono, (usuario, comentariosUsuario) -> new UsuarioComentarios(usuario, comentariosUsuario))
+//        usuarioMono.zipWith(comentariosUsuarioMono, UsuarioComentarios::new)
+
+        Mono<UsuarioComentarios> usuarioConComentarios = usuarioMono.zipWith(comentariosUsuarioMono, UsuarioComentarios::new);
+        usuarioConComentarios.subscribe(uc -> log.info(uc.toString()));
+    }
     public void ejemploUsuarioComentariosFlatMap() {
         Mono<Usuario> usuarioMono = Mono.fromCallable(() -> new Usuario("John", "Doe"));
         Mono<Comentarios> comentariosUsuarioMono = Mono.fromCallable(() -> {
