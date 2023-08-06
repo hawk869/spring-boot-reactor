@@ -32,7 +32,14 @@ public class SpringBootReactorApplication implements CommandLineRunner {
         ejemploUsuarioComentariosFlatMap();
         ejemploUsuarioComentariosZipWith();
         ejemploUsuarioComentariosZipWithForma2();
+        ejemploZipWithRangos();
 
+    }
+    public void ejemploZipWithRangos() {
+        Flux.just(1, 2, 3, 4)
+                .map(integer -> (integer*2))
+                .zipWith(Flux.range(0, 4), (uno, dos) -> String.format("Primer flux: %d, Segundo flux: %d", uno, dos))
+                .subscribe(log::info);
     }
     public void ejemploUsuarioComentariosZipWithForma2() {
         Mono<Usuario> usuarioMono = Mono.fromCallable(() -> new Usuario("John", "Doe"));
