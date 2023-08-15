@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +34,25 @@ public class SpringBootReactorApplication implements CommandLineRunner {
         ejemploUsuarioComentariosZipWith();
         ejemploUsuarioComentariosZipWithForma2();
         ejemploZipWithRangos();
+        ejemploInterval();
+        ejemploDelayElements();
 
+    }
+
+    public void ejemploDelayElements() {
+        Flux<Integer> rango = Flux.range(1,12)
+                .delayElements(Duration.ofSeconds(1))
+                .doOnNext(i -> log.info(i.toString()));
+
+        rango.blockLast(); // no es recomendable ya que puede generar cuellos de botella
+    }
+    public void ejemploInterval() {
+        Flux<Integer> rango = Flux.range(1,12);
+        Flux<Long> delay = Flux.interval(Duration.ofSeconds(1));
+
+        rango.zipWith(delay, (ra, de) -> ra)
+                .doOnNext(i -> log.info(i.toString()))
+                .blockLast();
     }
     public void ejemploZipWithRangos() {
         Flux.just(1, 2, 3, 4)
