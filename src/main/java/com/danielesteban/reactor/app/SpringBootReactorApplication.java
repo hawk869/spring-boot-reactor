@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 @SpringBootApplication
 public class SpringBootReactorApplication implements CommandLineRunner {
@@ -24,21 +25,40 @@ public class SpringBootReactorApplication implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) {
+    public void run(String... args) throws InterruptedException {
 
-        ejemploIterable();
-        ejemploFlatMap();
-        ejemploToString();
-        ejemploCollectList();
-        ejemploUsuarioComentariosFlatMap();
-        ejemploUsuarioComentariosZipWith();
-        ejemploUsuarioComentariosZipWithForma2();
-        ejemploZipWithRangos();
-        ejemploInterval();
-        ejemploDelayElements();
+//        ejemploIterable();
+//        ejemploFlatMap();
+//        ejemploToString();
+//        ejemploCollectList();
+//        ejemploUsuarioComentariosFlatMap();
+//        ejemploUsuarioComentariosZipWith();
+//        ejemploUsuarioComentariosZipWithForma2();
+//        ejemploZipWithRangos();
+//        ejemploInterval();
+//        ejemploDelayElements();
+        ejemploIntervalInfinito();
 
     }
 
+    public void ejemploIntervalInfinito() throws InterruptedException {
+
+        CountDownLatch latch = new CountDownLatch(1);
+
+        Flux.interval(Duration.ofSeconds(1))
+                .doOnTerminate(latch::countDown)
+                .flatMap(i -> {
+                    if (i >= 5)
+                        return Flux.error(new InterruptedException("Solo hasta 5!"));
+                    return Flux.just(i);
+                })
+                .map(i -> "Hola " + i)
+                .retry(2)
+//                .doOnNext(log::info)
+                .subscribe(log::info, e -> log.error(e.getMessage()));
+
+        latch.await();
+    }
     public void ejemploDelayElements() {
         Flux<Integer> rango = Flux.range(1,12)
                 .delayElements(Duration.ofSeconds(1))
