@@ -3,6 +3,8 @@ package com.danielesteban.reactor.app;
 import com.danielesteban.reactor.app.models.Comentarios;
 import com.danielesteban.reactor.app.models.Usuario;
 import com.danielesteban.reactor.app.models.UsuarioComentarios;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -40,7 +42,47 @@ public class SpringBootReactorApplication implements CommandLineRunner {
 //        ejemploInterval();
 //        ejemploDelayElements();
 //        ejemploIntervalInfinito();
-        ejemploIntervalDesdeCreate();
+//        ejemploIntervalDesdeCreate();
+        ejemploContraPresion();
+
+    }
+    public void ejemploContraPresion() {
+
+        Flux.range(1, 10)
+                .log()
+                .limitRate(5)
+                .subscribe(/*new Subscriber<Integer>() {
+
+                    private Subscription s;
+                    private Integer limite = 2;
+                    private Integer consumido = 0;
+                    @Override
+                    public void onSubscribe(Subscription s) {
+                        this.s = s;
+//                        s.request(Long.MAX_VALUE);
+                        s.request(limite);
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+                        log.info(integer.toString());
+                        consumido++;
+                        if (consumido == limite) {
+                            consumido = 0;
+                            s.request(limite);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                }*/);
 
     }
     public void ejemploIntervalDesdeCreate() {
